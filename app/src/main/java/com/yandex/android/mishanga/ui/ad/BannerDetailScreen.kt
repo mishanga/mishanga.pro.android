@@ -4,12 +4,9 @@ import android.util.Log
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -48,7 +45,7 @@ fun BannerDetailScreen(
     val adUnitId = settings.adUnitId.ifBlank { AdConstants.TEST_BANNER }
     val aimBannerId = settings.aimBannerId.ifBlank { AdConstants.TEST_BANNER }
 
-    var status by remember { mutableStateOf("idle") }
+    var status by remember { mutableStateOf("Wait >>>") }
     var reload by remember { mutableStateOf(false) }
 
     fun request(): AdRequest = AdRequest.Builder()
@@ -62,86 +59,75 @@ fun BannerDetailScreen(
         .build()
 
     CustomBackground {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 56.dp)) {
             topBar(name, onBack)
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp),
-                verticalArrangement = Arrangement.Top,
+                verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 PrimaryButton(
-                    text = "Load $name ${sizeBanner.first}x${sizeBanner.second}",
+                    text = "Load Ad",
                     modifier = Modifier.fillMaxWidth(0.9f)
                 ) {
                     status = "loading…"
                     reload = true
                 }
 
-                Spacer(Modifier.height(12.dp))
-
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Status: $status")
-                        Spacer(Modifier.height(8.dp))
-
-                        AndroidView(
-                            factory = { ctx ->
-                                BannerAdView(ctx).apply {
-                                    layoutParams = FrameLayout.LayoutParams(
-                                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                                        ViewGroup.LayoutParams.WRAP_CONTENT
-                                    )
-                                    setAdUnitId(adUnitId)
-                                    setBannerAdEventListener(object : BannerAdEventListener {
-                                        override fun onAdLoaded() {
-                                            status = "loaded"
-                                            Log.d("YangoAds", "Banner $name loaded")
-                                        }
-
-                                        override fun onAdFailedToLoad(error: AdRequestError) {
-                                            status = "error: ${error.description}"
-                                            Log.d("YangoAds", "Banner $name error $error")
-                                        }
-
-                                        override fun onAdClicked() {}
-                                        override fun onLeftApplication() {}
-                                        override fun onReturnedToApplication() {}
-                                        override fun onImpression(data: com.yandex.mobile.ads.common.ImpressionData?) {}
-                                    })
-                                    setAdSize(
-                                        BannerAdSize.fixedSize(
-                                            ctx,
-                                            sizeBanner.first,
-                                            sizeBanner.second
-                                        )
-                                    )
+                AndroidView(
+                    factory = { ctx ->
+                        BannerAdView(ctx).apply {
+                            layoutParams = FrameLayout.LayoutParams(
+                                ViewGroup.LayoutParams.WRAP_CONTENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                            )
+                            setAdUnitId(adUnitId)
+                            setBannerAdEventListener(object : BannerAdEventListener {
+                                override fun onAdLoaded() {
+                                    status = "loaded"
+                                    Log.d("YangoAds", "Banner $name loaded")
                                 }
-                            },
-                            update = { view ->
-                                if (reload) {
-                                    view.setAdSize(
-                                        BannerAdSize.fixedSize(
-                                            context,
-                                            sizeBanner.first,
-                                            sizeBanner.second
-                                        )
-                                    )
-                                    view.loadAd(request())
-                                    reload = false
+
+                                override fun onAdFailedToLoad(error: AdRequestError) {
+                                    status = "error: ${error.description}"
+                                    Log.d("YangoAds", "Banner $name error $error")
                                 }
-                            }
-                        )
+
+                                override fun onAdClicked() {}
+                                override fun onLeftApplication() {}
+                                override fun onReturnedToApplication() {}
+                                override fun onImpression(data: com.yandex.mobile.ads.common.ImpressionData?) {}
+                            })
+                            setAdSize(
+                                BannerAdSize.fixedSize(
+                                    ctx,
+                                    sizeBanner.first,
+                                    sizeBanner.second
+                                )
+                            )
+                        }
+                    },
+                    update = { view ->
+                        if (reload) {
+                            view.setAdSize(
+                                BannerAdSize.fixedSize(
+                                    context,
+                                    sizeBanner.first,
+                                    sizeBanner.second
+                                )
+                            )
+                            view.loadAd(request())
+                            reload = false
+                        }
                     }
-                }
+                )
+
+                Text("Status: $status")
             }
         }
     }

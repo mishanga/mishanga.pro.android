@@ -33,6 +33,7 @@ import com.yandex.android.mishanga.ui.ad.BannerDetailScreen
 import com.yandex.android.mishanga.ui.ad.BannerScreen
 import com.yandex.android.mishanga.ui.ad.InterstitialScreen
 import com.yandex.android.mishanga.ui.ad.RewardedScreen
+import com.yandex.android.mishanga.ui.components.AppTopBar
 import com.yandex.android.mishanga.ui.components.CustomBackground
 import com.yandex.android.mishanga.ui.components.PrimaryButton
 import com.yandex.android.mishanga.ui.theme.SamplemishangaTheme
@@ -127,33 +128,6 @@ fun AppNav() {
             }
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun AppTopBar(
-    title: String,
-    canNavigateBack: Boolean,
-    onBack: (() -> Unit)?,
-    onSettings: (() -> Unit)?
-) {
-    TopAppBar(
-        title = { Text(title) },
-        navigationIcon = {
-            if (canNavigateBack && onBack != null) {
-                IconButton(onClick = onBack) {
-                    Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
-                }
-            }
-        },
-        actions = {
-            if (onSettings != null) {
-                IconButton(onClick = onSettings) {
-                    Icon(Icons.Filled.Settings, contentDescription = "Settings")
-                }
-            }
-        }
-    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

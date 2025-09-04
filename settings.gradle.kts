@@ -19,5 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "sample-mishanga"
+rootProject.name = "Mishanga Pro"
 include(":app")
+ 

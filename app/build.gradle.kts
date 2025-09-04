@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.yandex.android.mishanga"
+    namespace = "pro.mishanga.android"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.yandex.android.mishanga"
+        applicationId = "pro.mishanga.android"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
